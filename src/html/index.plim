@@ -1,0 +1,23 @@
+- namespace name="defs" defs.plim
+---!
+    from utils import WIDTHS, DEV, imgurl, srcset, images, Env
+
+doctype html
+html lang="en"
+    head
+        - call title="${Env.title}" description="${Env.description}" defs:head
+
+    body.bg-gray-100.text-center.max-w-[100vw].flex.flex-col.min-h-[100vh].justify-between.overflow-x-hidden
+        header.flex.items-center.justify-between.px-4.md:px-8.max-w-[100vw].w-[100vw].h-24.text-gray-500.justify-self-end
+            a.flex.flex-center.hover:transform.hover:scale-110 href="/"
+                img.w-7.h-7.md:w-10.md:h-10 src="${imgurl('icon', 320, convert_to='webp')}"
+            .links
+                a.text-sm.md:text-base.text-red-hot.ml-4 href="/contact" Contact
+
+        section#hero.flex.flex-col.md:flex-row.flex-center.w-screen.min-h-screen.max-w-[100vw]
+            div#picture.flex.flex-col.flex-center.w-screen
+                h1#title.text-4xl.mt-5.mb-3.text-red-hot
+                    ${Env.title}
+
+        footer.flex.flex-col.md:flex-row.items-center.justify-center.md:justify-between.px-2.md:px-8.max-w-[100vw].w-[100vw].h-24.text-gray-500.justify-self-end.mt-auto
+            h4.font-extralight.text-mauve-blackish.whitespace-nowrap ${Env.title} © 2023

@@ -1,0 +1,71 @@
+- namespace name="defs" defs.plim
+---!
+    import os
+    from utils import WIDTHS, DEV, imgurl, srcset, images, Env
+
+    DEV = os.getenv("NODE_ENV") == "development"
+
+    class CLS:
+        section = "p-4 md:p-8 my-8 mx-auto \
+                w-[95vw] max-w-[95vw] md:w-[600px] \
+                text-mauve-blackish bg-white bg-opacity-40 \
+                backdrop-blur rounded-2xl text-left shadow-xl"
+        field = "placeholder-gray-900 placeholder-opacity-60 \
+                w-full px-4 py-3 mb-4 \
+                rounded-xl shadow-xl bg-white \
+                border border-mauve-gray border-opacity-20"
+
+doctype html
+html lang="en"
+    head
+        - call title="${Env.title} - Contact" description="Contact form for ${Env.title}" defs:head
+
+
+    body.paper-bg.text-center.max-w-[100vw].flex.flex-col.min-h-[100vh].overflow-x-hidden
+        .isolate.fixed.top-0.left-0.w-[100vw].h-[100vh].bg-gradient-to-b.from-gray-50.to-orange-100.-z-10
+            svg.w-[100vw].h-[100vh].mix-blend-color-burn : grain
+
+        header.flex.items-center.justify-between.px-4.md:px-8.max-w-[100vw].w-[100vw].h-24.text-gray-500.justify-self-end
+            a.flex.flex-center.hover:transform.hover:scale-110 href="/"
+                img.w-7.h-7.md:w-10.md:h-10 src="${imgurl('icon', 320, convert_to='webp')}"
+            .links
+                a.text-sm.md:text-base.text-red-hot.ml-4 href="/" Home
+
+        div#content.w-[100vw].max-w-[100vw].flex.flex-col.flex-center
+            h1.text-mauve-black.text-5xl.mt-[4vh].mb-10 Contact us
+
+            section#contact.${CLS.section}
+                form.flex.flex-col.items-center.justify-center action="Env.form_url" data-botpoison-public-key="${Env.botpoison_pk}"
+                  label.self-start.font-medium.ml-1 for="name" Name
+                  input#from hidden="true" name="_email.from" type="text"
+                  input#name.${CLS.field} name="name" placeholder="John Doe" required="" type="text"
+
+                  label.self-start.font-medium.ml-1 for="email" Email
+                  input#email.${CLS.field} name="email" placeholder="john@doe.com" required="" type="email"
+
+                  label.self-start.font-medium.ml-1 for="subject" Subject
+                  input#email-subject hidden="true" name="_email.subject" type="text"
+                  input#subject.${CLS.field} name="subject" placeholder="What's this message about?" required="" type="text"
+
+                  label.self-start.font-medium.ml-1 for="message" Message
+                  textarea#message.${CLS.field} name="message" placeholder="More details" required="" type="text" rows="6"
+
+                  button.btn.btn-yellow-lunar.hover:bg-white.hover:text-black.!py-1 type="submit" Send
+
+            -if not DEV
+                script async="true" src="https://unpkg.com/@botpoison/browser"
+
+    -coffee
+        url = new URL(window.location.href)
+        email = url.searchParams.get("email")
+
+        emailInput = document.getElementById("email")
+        emailInput.value = email
+
+        nameInput = document.getElementById("name")
+        fromInput = document.getElementById("from")
+        nameInput.addEventListener 'input', (event) -> fromInput.value = event.target.value
+
+        subjectInput = document.getElementById("subject")
+        emailSubjectInput = document.getElementById("email-subject")
+        subjectInput.addEventListener 'input', (event) -> emailSubjectInput.value = event.target.value

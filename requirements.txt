@@ -1,0 +1,6 @@
+livereload
+lxml
+git+https://github.com/alin23/Plim.git@b752517#egg=plim
+pygments
+requests
+multiplex

@@ -1,0 +1,393 @@
+%YAML 1.2
+---
+# http://www.sublimetext.com/docs/3/syntax.html
+name: Plim
+file_extensions:
+  - plim
+scope: text.plim
+contexts:
+  main:
+    - match: ^\s*(\|)\s*(.+)$
+      captures:
+        1: entity.type.section.plim
+    - match: ^(\s*)-\s*(javascript)$
+      captures:
+        2: constant.language.name.javascript.filter.plim
+      push:
+        - meta_scope: source.js.filter.plim
+        - match: ^(?!(\1\s)|\s*$)
+          pop: true
+        - include: scope:source.js
+    - match: ^(\s*)(script)$
+      captures:
+        2: constant.language.name.javascript.filter.plim
+      push:
+        - meta_scope: source.js.filter.plim
+        - match: ^(?!(\1\s)|\s*$)
+          pop: true
+        - include: scope:source.js
+    - match: ^(\s*)(---!?)$
+      captures:
+        2: constant.language.name.python.filter.plim
+      push:
+        - meta_scope: source.python.filter.plim
+        - match: ^(?!(\1\s)|\s*$)
+          pop: true
+        - include: scope:source.python
+    - match: ^(\s*)-\s*(coffee)$
+      captures:
+        2: constant.language.name.coffeescript.filter.plim
+      push:
+        - meta_scope: source.coffee.filter.plim
+        - match: ^(?!(\1\s)|\s*$)
+          pop: true
+        - include: scope:source.coffee
+    - match: ^(\s*)-\s*(markdown|md|)$
+      captures:
+        2: constant.language.name.markdown.filter.plim
+      push:
+        - meta_scope: text.markdown.filter.plim
+        - match: ^(?!(\1)\s\s\s\s|\s*$)
+          pop: true
+        # - include: scope:text.html.markdown.multimarkdown
+    - match: '^(\s*)(?:(index)([A-Za-z\-0-9]+)?(#)([A-Za-z\-\._0-9]+)?(\.)([A-Za-z\-0-9]+)?)( : )(.+)'
+      comment: "index"
+      captures:
+        2: entity.name.tag.plim
+        3: entity.other.attribute-name.event.plim
+        4: punctuation.separator.key-value.html
+        5: entity.other.attribute-name.id.plim
+        6: punctuation.separator.key-value.html
+        7: entity.other.attribute-name.class.plim
+        8: punctuation.terminator.tag.plim
+        9: string.quoted.double.html
+      push:
+        - meta_scope: text.markdown.filter.plim
+        - match: ^(?!(\1)\s\s\s\s|\s*$)
+          pop: true
+        # - include: scope:text.html.markdown.multimarkdown
+    - match: ^(\s*)(style)$
+      captures:
+        2: constant.language.name.css.filter.plim
+      push:
+        - meta_scope: source.scss.embedded.plim
+        - match: ^(?!(\1\s)|\s*$)
+          pop: true
+        - include: scope:source.scss
+    - match: ^(\s*)-\s*(sass)$
+      captures:
+        2: constant.language.name.sass.filter.plim
+      push:
+        - meta_scope: source.sass.filter.plim
+        - match: ^(?!(\1\s)|\s*$)
+          pop: true
+        - include: scope:source.sass
+    - match: ^(\s*)-\s*(scss)$
+      captures:
+        2: constant.language.name.scss.filter.plim
+      push:
+        - meta_scope: source.scss.filter.plim
+        - match: ^(?!(\1\s)|\s*$)
+          pop: true
+        - include: scope:source.scss
+    - match: ^(\s*)-\s*(stylus)$
+      captures:
+        2: constant.language.name.stylus.filter.plim
+      push:
+        - meta_scope: source.stylus.filter.plim
+        - match: ^(?!(\1\s)|\s*$)
+          pop: true
+        - include: scope:source.stylus
+    - match: ^(\s*)-\s*(less)$
+      captures:
+        2: constant.language.name.less.filter.plim
+      push:
+        - meta_scope: source.less.filter.plim
+        - match: ^(?!(\1\s)|\s*$)
+          pop: true
+        - include: scope:source.less
+    - match: ^(\s*)(/)\s*.*$
+      captures:
+        2: comment.line.slash.plim
+      push:
+        - meta_scope: comment.block.plim
+        - match: ^(?!(\1\s)|\s*$)
+          pop: true
+    - match: ^\s*(?=-)
+      push:
+        - match: $
+          pop: true
+        - include: pythonline
+    - match: (?==+|~)
+      push:
+        - match: $
+          pop: true
+        - include: pythonline
+    - include: interpolation
+    - include: tag-attribute
+    - include: attributes
+    - include: embedded-python
+    - match: ^(\s*)(\||')\s*
+      comment: Verbatim text (can include HTML tags and copied lines)
+      push:
+        - match: ^(?!(\1\s)|\s*$)
+          pop: true
+        - include: scope:text.html.basic
+        - include: embedded-python
+    - match: '^\s*(?:(\.)((\w+:)?(!)?[\w\d\-\/:]+((\[)[^\]]+(\]))?)?|(#)([\w-]+)?|([-a-z0-9]+)([\w-]+)?)'
+      comment: "1 - dot OR hash OR any combination of word, number; 2 - OPTIONAL any combination of word, number, dash or underscore (following a . or"
+      captures:
+        1: entity.type.section.plim
+        2: entity.other.attribute-name.class.html
+        3: entity.type.section.html
+        4: entity.other.attribute-name.important.html
+        5: constant.numeric.float.python
+        6: punctuation.definition.list.begin.python
+        7: punctuation.definition.list.end.python
+        8: entity.type.section.plim
+        9: entity.other.attribute-name.id.plim
+        10: entity.name.tag.plim
+        11: entity.other.attribute-name.event.plim
+      push:
+        - meta_scope: meta.tag
+        - match: '$|(?!\.|\$|#|:|-|~|/|\}|\]|\*\*|\s?[\*\*\{])'
+          captures:
+            1: entity.name.tag.plim
+            2: entity.other.attribute-name.event.plim
+          pop: true
+        - include: interpolation
+        - match: '(:[\w\d]+)+'
+          comment: XML
+          push:
+            - meta_scope: entity.name.tag.plim
+            - match: $|\s
+              pop: true
+        - match: '(:\s)(\.|#|[a-z0-9]+)([\w-]+)?'
+          comment: Inline HTML / 1 - colon; 2 - dot OR hash OR any combination of word, number; 3 - OPTIONAL any combination of word, number, dash or underscore (following a . or
+          captures:
+            1: punctuation.definition.tag.end.plim
+            2: entity.name.tag.plim
+            3: entity.other.attribute-name.event.plim
+          push:
+            - match: '$|(?!\.|#|=|-|~|/|\}|\]|\*\*|\s?[\*\*\{])'
+              captures:
+                1: punctuation.definition.tag.end.plim
+                2: entity.name.tag.plim
+                3: entity.other.attribute-name.event.plim
+              pop: true
+            - include: root-class-tag
+            - include: root-id-tag
+            - include: tag-attribute
+        - match: '(\*\*\{)(?=.*\}|.*\|\s*$)'
+          comment: Splat attributes
+          captures:
+            1: punctuation.section.embedded.python
+          push:
+            - meta_scope: source.python.embedded.plim
+            - match: '(\})|$|^(?!.*\|\s*$)'
+              captures:
+                1: punctuation.section.embedded.python
+              pop: true
+            - include: embedded-python
+        - match: '(\*\*)(\S+)(?=\s|\|)'
+          comment: Splat attributes
+          captures:
+            1: punctuation.section.embedded.python
+            2: variable.language.plim
+        - include: root-class-tag
+        - include: root-id-tag
+        - include: pythonline
+        - match: /
+          scope: punctuation.terminator.tag.plim
+    - match: ^\s*(\\.)
+      captures:
+        1: meta.escape.plim
+    - match: ^\s*(?=\||,)
+      push:
+        - match: $
+          pop: true
+        - include: embedded-python
+        - include: scope:text.html.basic
+    - match: '(?=<[\w\d\:]+)'
+      comment: Inline and root-level HTML tags
+      push:
+        - match: $|\/\>
+          pop: true
+        - include: scope:text.html.basic
+  continuation:
+    - match: '([\\,])\s*\n'
+      captures:
+        1: punctuation.separator.continuation.plim
+  delimited-python-a:
+    - match: '=\('
+      push:
+        - meta_scope: source.python.embedded.plim
+        - match: \)(?=( \w|$))
+          pop: true
+        - include: scope:source.python
+  delimited-python-b:
+    - match: '=\['
+      push:
+        - meta_scope: source.python.embedded.plim
+        - match: '\](?=( \w|$))'
+          pop: true
+        - include: scope:source.python
+  delimited-python-c:
+    - match: '=\{'
+      push:
+        - meta_scope: source.python.embedded.plim
+        - match: '\}(?=( \w|$))'
+          pop: true
+        - include: scope:source.python
+  embedded-python:
+    - match: '(?<!\\)#\{{1,2}'
+      scope: punctuation.section.begin.embedded.plim
+      push:
+        - meta_scope: source.python.embedded.plim
+        - match: '\}{1,2}'
+          scope: punctuation.section.end.embedded.plim
+          pop: true
+        - include: scope:source.python
+  entities:
+    - match: "(&)([a-zA-Z0-9]+|#[0-9]+|#x[0-9a-fA-F]+)(;)"
+      scope: constant.character.entity.html
+      captures:
+        1: punctuation.definition.entity.html
+        3: punctuation.definition.entity.html
+    - match: "&"
+      scope: invalid.illegal.bad-ampersand.html
+  interpolated-python:
+    - match: '=(?=\b)'
+      push:
+        - meta_scope: source.python.embedded.html
+        - match: \s|\w$
+          pop: true
+  root-class-tag:
+    - match: '(\.)((\w+:)?(!)?[\w\d\-\/:]+((\[)[^\]]+(\]))?)'
+      captures:
+        1: entity.type.section.plim
+        2: entity.other.attribute-name.class.html
+        3: entity.type.section.html
+        4: entity.other.attribute-name.important.html
+        5: constant.numeric.float.python
+        6: punctuation.definition.list.begin.python
+        7: punctuation.definition.list.end.python
+  root-id-tag:
+    - match: '(#)([\w\d\-]+)'
+      captures:
+        1: entity.type.section.plim
+        2: entity.other.attribute-name.id.html
+  pythonline:
+    - match: (==|=)(?!`)(<>|><|<'|'<|<|>)?|-\s*
+      comment: Hack to thwart Sublime's python highlighter. It thinks do without a variable continues the next line (this can be muted with a / at the end of the line). For things like yields, do is unnecessary without an argument, so this hack will suffice
+      push:
+        - meta_scope: meta.line.python.plim
+        - meta_content_scope: source.python.embedded.plim
+        - match: (\w+)(\.)(\w+)
+          captures:
+            1: storage.type.namespace.plim
+            2: punctuation.accessor.dot.plim
+            3: entity.name.function.plim
+        - match: (\w+)(:)(\w+)
+          captures:
+            1: storage.type.namespace.plim
+            2: punctuation.accessor.double-colon.plim
+            3: entity.name.function.plim
+        - match: (page|def|block|include|namespace|inherit|call|text)
+          captures:
+            1: constant.language.name.mako.filter.plim
+        - include: tag-attribute
+        - match: (do\s*\n$)|(?<!\\|,|,\n|\\\n)$
+          captures:
+            1: keyword.control.start-block.python
+          pop: true
+        - match: "#.*$"
+          comment: Hack to let python comments work in this context properly
+          scope: comment.line.number-sign.python
+        - include: continuation
+        - include: scope:source.python
+  string-double-quoted:
+    - match: (")(?=.*")
+      captures:
+        0: punctuation.definition.string.begin.html
+      push:
+        - meta_scope: string.quoted.double.html
+        - meta_content_scope: meta.toc-list.id.html
+        - match: '"'
+          captures:
+            0: punctuation.definition.string.end.html
+          pop: true
+        - include: embedded-python
+        - include: entities
+        - include: interpolation
+  string-single-quoted:
+    - match: (')(?=.*')
+      captures:
+        0: punctuation.definition.string.begin.html
+      push:
+        - meta_scope: string.quoted.single.html
+        - meta_content_scope: meta.toc-list.id.html
+        - match: "'"
+          captures:
+            0: punctuation.definition.string.end.html
+          pop: true
+        - include: embedded-python
+        - include: entities
+        - include: interpolation
+  attributes:
+    - match: \(
+      scope: punctuation.section.braces.begin.plim
+      push:
+        - meta_scope: meta.attributes.plim
+        - match: \)
+          scope: punctuation.section.braces.begin.plim
+          pop: true
+        - include: tag-attribute
+        - include: bool-attribute
+  interpolation:
+    - match: (\$\{)
+      captures:
+        1: punctuation.section.braces.begin.plim
+      push:
+        - meta_scope: meta.block.interpolation.plim
+        - match: \}
+          scope: punctuation.section.braces.end.plim
+          pop: true
+        - include: scope:source.python
+  bool-attribute:
+    - match: '\b[\w-]+\b'
+      scope: entity.other.attribute-name.bool.plim
+  tag-attribute:
+    - match: '([\w.#_-]+)(=)(?!\s)(true|false|nil)?\s*'
+      captures:
+        1: entity.other.attribute-name.event.plim
+        2: punctuation.separator.key-value.html
+        3: constant.language.plim
+      push:
+        - meta_scope: meta.attribute-with-value.plim
+        - match: '\(|\{'
+          scope: punctuation.definition.brace.begin.html
+          push:
+            - meta_scope: meta.attribute-value.plim
+            - match: '\}|\)'
+              scope: punctuation.definition.brace.end.html
+              pop: true
+            - include: tag-stuff
+            - include: string-double-quoted
+            - include: string-single-quoted
+        - meta_scope: meta.attribute-value.plim
+        - match: '\s|$'
+          scope: punctuation.definition.brace.end.html
+          pop: true
+        - include: interpolation
+        - include: tag-stuff
+        - include: string-double-quoted
+        - include: string-single-quoted
+  tag-stuff:
+    - include: tag-attribute
+    - include: interpolated-python
+    - include: delimited-python-a
+    - include: delimited-python-b
+    - include: delimited-python-c
+    - include: pythonline
+    - include: embedded-python
