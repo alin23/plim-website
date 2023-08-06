@@ -3,8 +3,6 @@ name: 'Repo Lockdown'
 on:
   pull_request_target:
     types: opened
-  schedule:
-    - cron: '0 * * * *'
 
 permissions:
   pull-requests: write
@@ -14,3 +12,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: dessant/repo-lockdown@v3
+        with:
+          pr-comment: >
+            This repository does not accept pull requests,
+            see the README for details.
