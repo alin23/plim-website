@@ -93,3 +93,22 @@
         source type="image/webp" srcset=${srcset(img, ext, width, factor, convert_to="webp")} media="(min-width: 768px)"
     source type="image/${ext}" srcset=${srcset(img, ext, width, mobile_factor)} media="(max-width: 767px)"
     source type="image/${ext}" srcset=${srcset(img, ext, width, factor)} media="(min-width: 768px)"
+
+-def dynamicVideoPlayPause()
+    -coffee
+        videoObserver = new IntersectionObserver(
+            (entries) ->
+                entries.forEach (entry) ->
+                    return unless entry.isIntersecting and entry.target.currentSrc?.length > 1
+                    if entry.intersectionRatio >= 0.45
+                        entry.target.play()
+                    else
+                        entry.target.pause()
+            , {threshold: [0.25, 0.45]}
+        )
+
+        document.querySelectorAll('video').forEach (video) ->
+            videoObserver.observe(video)
+            rect = video.getBoundingClientRect()
+            if rect? and rect.top + rect.height < 200
+                video.pause()
